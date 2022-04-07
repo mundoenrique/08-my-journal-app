@@ -1,12 +1,21 @@
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { logged } from '../../../Reducers/authReducer';
 
 export default function SignInView() {
+	const dispatch = useDispatch();
+	const handleLogin = (e) => {
+		e.preventDefault();
+
+		dispatch(logged(true));
+	};
+
 	return (
 		<>
 			<h3 className="auth__title">Login</h3>
 			<form
 				className="animate__animated animate__fadeIn animate__faster"
-				// onSubmit={handleLogin}
+				onSubmit={handleLogin}
 			>
 				<input
 					type="text"
