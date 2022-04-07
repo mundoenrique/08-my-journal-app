@@ -3,11 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
 import reportWebVitals from './reportWebVitals';
-import MainRouter from './routers/MainRouter';
+import App from './App';
 import { store } from './store/store';
 import { BrowserRouter } from 'react-router-dom';
 
-import './index.css';
+import './styles/styles.scss';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
@@ -16,7 +16,7 @@ root.render(
 	<React.StrictMode>
 		<Provider store={store}>
 			<BrowserRouter>
-				<MainRouter />
+				<App />
 			</BrowserRouter>
 		</Provider>
 	</React.StrictMode>
