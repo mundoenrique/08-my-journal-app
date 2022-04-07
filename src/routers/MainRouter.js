@@ -5,7 +5,7 @@ export default function MainRouter() {
 	return (
 		<>
 			<Routes>
-				<Route path="/" element={<App />} />
+				<Route path="/*" element={<App />} />
 			</Routes>
 		</>
 	);
