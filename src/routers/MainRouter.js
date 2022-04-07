@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
-import JournalView from '../views/journal/JournalView';
-import SignInView from '../views/user/SignInView';
-import SignUpView from '../views/user/SignUpView';
+import JournalView from '../components/views/journal/JournalView';
+import SignInView from '../components/views/user/SignInView';
+import SignUpView from '../components/views/user/SignUpView';
 
 export default function MainRouter() {
 	return (
