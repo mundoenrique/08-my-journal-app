@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { LoggedOut } from '../Reducers/authReducer';
+import { LoggedOut } from '../reducers/authReducer';
 import JournalEntries from './views/journal/JournalEntries';
 
 export default function SideBar() {

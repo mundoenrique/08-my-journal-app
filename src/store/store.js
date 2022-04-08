@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import handleRequestReducer from '../Reducers/handleRequestReducer';
-import authReducer from '../Reducers/authReducer';
-import EntriesReducer from '../Reducers/EntriesReducer';
+import handleRequestReducer from '../reducers/handleRequestReducer';
+import authReducer from '../reducers/authReducer';
+import EntriesReducer from '../reducers/EntriesReducer';
 
 export const store = configureStore({
 	reducer: {

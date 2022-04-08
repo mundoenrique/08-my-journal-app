@@ -1,7 +1,7 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
 import { googleProvider } from './SettingsFirebase';
-import { AuhtIniState } from '../Reducers/authReducer';
+import { AuhtIniState } from '../reducers/authReducer';
 
 const auth = getAuth();
 export const googleSignInFirebase = () => {

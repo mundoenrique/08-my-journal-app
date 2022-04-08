@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { useFormHook } from '../../../hooks/useFormHook';
-import { googleSignIn, LoggedIn } from '../../../Reducers/authReducer';
+import { googleSignIn, LoggedIn } from '../../../reducers/authReducer';
 
 export default function SignInView() {
 	const dispatch = useDispatch();
