@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { googleSignInFirebase } from '../firebase/UsersFirebase';
+import { endRequest, setError, startRequest } from './handleRequestReducer';
 
 export const AuhtIniState = {
-	loading: false,
 	logged: false,
 	uid: '',
 	name: '',
@@ -13,7 +13,7 @@ export const AuhtIniState = {
 	errorMsg: '',
 };
 
-export const googleSignIn = createAsyncThunk('auth/googleSignIn', async () => {
+const googleSignInThunk = createAsyncThunk('auth/googleSignIn', async () => {
 	return await googleSignInFirebase();
 });
 
@@ -42,23 +42,34 @@ export const authReducer = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(googleSignIn.pending, (state) => {
-				return {
-					...state,
-					loading: true,
-				};
-			})
-			.addCase(googleSignIn.fulfilled, (state, action) => {
+			.addCase(googleSignInThunk.fulfilled, (state, action) => {
 				return {
 					...state,
 					...action.payload,
-					loading: false,
-					logged: true,
+					logged: action.payload.errorCode === false,
+				};
+			})
+			.addCase(googleSignInThunk.rejected, (state, action) => {
+				return {
+					...state,
+					...action.payload,
 				};
 			});
 	},
 });
 
 export const { LoggedIn, LoggedOut } = authReducer.actions;
+
+export const googleSignIn = () => async (dispatch, getState) => {
+	dispatch(startRequest());
+	await dispatch(googleSignInThunk());
+	const { errorCode, errorMsg } = getState().auth;
+
+	if (errorCode) {
+		dispatch(setError({ errorMsg }));
+	}
+
+	dispatch(endRequest());
+};
 
 export default authReducer.reducer;

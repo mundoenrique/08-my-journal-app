@@ -6,7 +6,7 @@ import { googleSignIn, LoggedIn } from '../../../Reducers/authReducer';
 
 export default function SignInView() {
 	const dispatch = useDispatch();
-	const { loading } = useSelector((state) => state.auth);
+	const { loading } = useSelector((state) => state.handleRequest);
 	const [{ email, password }, handleFormValues] = useFormHook({
 		email: '',
 		password: '',
@@ -18,7 +18,7 @@ export default function SignInView() {
 		dispatch(LoggedIn({ uid: password, name: email, email: email }));
 	};
 
-	const handleGooglesignIn = () => {
+	const handleGoogleSignIn = () => {
 		dispatch(googleSignIn());
 	};
 
@@ -57,7 +57,7 @@ export default function SignInView() {
 				</button>
 				<div className="auth__social-network">
 					<p>Login with social network</p>
-					<div className="google-btn" onClick={handleGooglesignIn}>
+					<div className="google-btn" onClick={handleGoogleSignIn}>
 						<div className="google-icon-wrapper">
 							<img
 								className="google-icon"
