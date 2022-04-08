@@ -1,13 +1,20 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useForm } from '../../../hooks/useForm';
 import { LoggedIn } from '../../../Reducers/authReducer';
 
 export default function SignInView() {
 	const dispatch = useDispatch();
+	const { loading } = useSelector((state) => state.auth);
+	const [{ email, password }, handleFormValues] = useForm({
+		email: '',
+		password: '',
+	});
+
 	const handleLogin = (e) => {
 		e.preventDefault();
 
-		dispatch(LoggedIn({ uid: 'jhgjhgjhgjhg', name: 'Enrique' }));
+		dispatch(LoggedIn({ uid: password, name: email }));
 	};
 
 	return (
@@ -23,21 +30,21 @@ export default function SignInView() {
 					name="email"
 					className="auth__input"
 					autoComplete="off"
-					// value={email}
-					// onChange={handleInputValues}
+					value={email}
+					onChange={handleFormValues}
 				/>
 				<input
 					type="password"
 					placeholder="Password"
 					name="password"
 					className="auth__input"
-					// value={password}
-					// onChange={handleInputValues}
+					value={password}
+					onChange={handleFormValues}
 				/>
 				<button
 					type="submit"
 					className="btn btn-primary btn-block"
-					// disabled={loading}
+					disabled={loading}
 				>
 					Login
 				</button>
