@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+
 import { useForm } from '../../../hooks/useForm';
-import { LoggedIn } from '../../../Reducers/authReducer';
+import { googleSignIn, LoggedIn } from '../../../Reducers/authReducer';
 
 export default function SignInView() {
 	const dispatch = useDispatch();
@@ -11,10 +12,14 @@ export default function SignInView() {
 		password: '',
 	});
 
-	const handleLogin = (e) => {
+	const handlesignIn = (e) => {
 		e.preventDefault();
 
 		dispatch(LoggedIn({ uid: password, name: email }));
+	};
+
+	const handleGooglesignIn = () => {
+		dispatch(googleSignIn());
 	};
 
 	return (
@@ -22,7 +27,7 @@ export default function SignInView() {
 			<h3 className="auth__title">Login</h3>
 			<form
 				className="animate__animated animate__fadeIn animate__faster"
-				onSubmit={handleLogin}
+				onSubmit={handlesignIn}
 			>
 				<input
 					type="text"
@@ -32,6 +37,7 @@ export default function SignInView() {
 					autoComplete="off"
 					value={email}
 					onChange={handleFormValues}
+					disabled={loading}
 				/>
 				<input
 					type="password"
@@ -40,6 +46,7 @@ export default function SignInView() {
 					className="auth__input"
 					value={password}
 					onChange={handleFormValues}
+					disabled={loading}
 				/>
 				<button
 					type="submit"
@@ -50,7 +57,7 @@ export default function SignInView() {
 				</button>
 				<div className="auth__social-network">
 					<p>Login with social network</p>
-					<div className="google-btn" /* onClick={handleGoogleLogin} */>
+					<div className="google-btn" onClick={handleGooglesignIn}>
 						<div className="google-icon-wrapper">
 							<img
 								className="google-icon"

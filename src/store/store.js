@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+
 import authReducer from '../Reducers/authReducer';
 import EntriesReducer from '../Reducers/EntriesReducer';
 
