@@ -15,7 +15,7 @@ export default function SignInView() {
 	const handlesignIn = (e) => {
 		e.preventDefault();
 
-		dispatch(LoggedIn({ uid: password, name: email }));
+		dispatch(LoggedIn({ uid: password, name: email, email: email }));
 	};
 
 	const handleGooglesignIn = () => {

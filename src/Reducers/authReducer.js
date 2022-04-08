@@ -1,29 +1,25 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getAuth, signInWithPopup } from 'firebase/auth';
-import { googleProvider } from '../firebase/fireBaseConfig';
 
-const initialState = {
+import { googleSignInFirebase } from '../firebase/UsersFirebase';
+
+export const AuhtIniState = {
 	loading: false,
 	logged: false,
 	uid: '',
 	name: '',
 	email: '',
+	token: '',
+	errorCode: false,
+	errorMsg: '',
 };
 
 export const googleSignIn = createAsyncThunk('auth/googleSignIn', async () => {
-	const auth = getAuth();
-	const googleUser = await signInWithPopup(auth, googleProvider);
-	const user = {
-		uid: googleUser.user.uid,
-		displayName: googleUser.user.displayName,
-		email: googleUser.user.email,
-	};
-	return user;
+	return await googleSignInFirebase();
 });
 
 export const authReducer = createSlice({
 	name: 'auth',
-	initialState,
+	initialState: AuhtIniState,
 	reducers: {
 		LoggedIn: (state, action) => {
 			return {
@@ -55,11 +51,9 @@ export const authReducer = createSlice({
 			.addCase(googleSignIn.fulfilled, (state, action) => {
 				return {
 					...state,
+					...action.payload,
 					loading: false,
 					logged: true,
-					uid: action.payload.uid,
-					name: action.payload.displayName,
-					email: action.payload.email,
 				};
 			});
 	},
