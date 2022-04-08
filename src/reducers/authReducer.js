@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { googleSignInFirebase } from '../firebase/UsersFirebase';
+import { googleSignInFirebase } from '../firebases/usersFirebase';
 import { endRequest, setError, startRequest } from './handleRequestReducer';
 
 export const AuhtIniState = {
