@@ -1,13 +1,13 @@
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { logged } from '../../../Reducers/authReducer';
+import { LoggedIn } from '../../../Reducers/authReducer';
 
 export default function SignInView() {
 	const dispatch = useDispatch();
 	const handleLogin = (e) => {
 		e.preventDefault();
 
-		dispatch(logged(true));
+		dispatch(LoggedIn({ uid: 'jhgjhgjhgjhg', name: 'Enrique' }));
 	};
 
 	return (
