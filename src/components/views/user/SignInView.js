@@ -1,13 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { useForm } from '../../../hooks/useForm';
+import { useFormHook } from '../../../hooks/useFormHook';
 import { googleSignIn, LoggedIn } from '../../../Reducers/authReducer';
 
 export default function SignInView() {
 	const dispatch = useDispatch();
 	const { loading } = useSelector((state) => state.auth);
-	const [{ email, password }, handleFormValues] = useForm({
+	const [{ email, password }, handleFormValues] = useFormHook({
 		email: '',
 		password: '',
 	});
