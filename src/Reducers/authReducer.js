@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
 	loading: false,
@@ -6,6 +6,13 @@ const initialState = {
 	uid: '',
 	name: '',
 };
+
+// export googleSignIn = createAsyncThunk(
+// 	'auth/googleSignIn',
+// 	async(emaul, password) = {
+
+// 	}
+// );
 
 export const authReducer = createSlice({
 	name: 'auth',
