@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import {
-	googleSignInFirebase,
+	signInGoogleFirebase,
 	signUpUserFirebase,
 } from '../firebase/usersFirebase';
 import {
@@ -21,14 +21,17 @@ export const AuhtIniState = {
 	errorMsg: '',
 };
 
-const googleSignInThunk = createAsyncThunk('auth/googleSignIn', async () => {
-	return await googleSignInFirebase();
-});
-
 const signUpUserThunk = createAsyncThunk(
-	'auth/signUpUser',
+	'auth/authSignUpUser',
 	async ({ name, email, password }) => {
 		return await signUpUserFirebase(name, email, password);
+	}
+);
+
+const signInGoogleThunk = createAsyncThunk(
+	'auth/authSignInGoogle',
+	async () => {
+		return await signInGoogleFirebase();
 	}
 );
 
@@ -57,19 +60,6 @@ export const authReducer = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(googleSignInThunk.fulfilled, (state, action) => {
-				return {
-					...state,
-					...action.payload,
-					logged: action.payload.errorCode === false,
-				};
-			})
-			.addCase(googleSignInThunk.rejected, (state, action) => {
-				return {
-					...state,
-					...action.payload,
-				};
-			})
 			.addCase(signUpUserThunk.fulfilled, (state, action) => {
 				return {
 					...state,
@@ -81,25 +71,26 @@ export const authReducer = createSlice({
 					...state,
 					...action.payload,
 				};
+			})
+			.addCase(signInGoogleThunk.fulfilled, (state, action) => {
+				return {
+					...state,
+					...action.payload,
+					logged: action.payload.errorCode === false,
+				};
+			})
+			.addCase(signInGoogleThunk.rejected, (state, action) => {
+				return {
+					...state,
+					...action.payload,
+				};
 			});
 	},
 });
 
 export const { LoggedIn, LoggedOut } = authReducer.actions;
 
-export const googleSignIn = () => async (dispatch, getState) => {
-	dispatch(hReqStartRequest());
-	await dispatch(googleSignInThunk());
-	const { errorCode, errorMsg } = getState().auth;
-
-	if (errorCode) {
-		dispatch(hReqSetError({ errorMsg }));
-	}
-
-	dispatch(hReqEndRequest());
-};
-
-export const signUpUser =
+export const authSignUpUser =
 	(name, email, password) => async (dispatch, getState) => {
 		dispatch(hReqStartRequest());
 		await dispatch(signUpUserThunk({ name, email, password }));
@@ -113,5 +104,17 @@ export const signUpUser =
 
 		dispatch(hReqEndRequest());
 	};
+
+export const authSignInGoogle = () => async (dispatch, getState) => {
+	dispatch(hReqStartRequest());
+	await dispatch(signInGoogleThunk());
+	const { errorCode, errorMsg } = getState().auth;
+
+	if (errorCode) {
+		dispatch(hReqSetError({ errorMsg }));
+	}
+
+	dispatch(hReqEndRequest());
+};
 
 export default authReducer.reducer;

@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import validator from 'validator';
 
 import { useFormHook } from '../../../hooks/useFormHook';
-import { signUpUser } from '../../../reducers/authReducer';
+import { authSignUpUser } from '../../../reducers/authReducer';
 import { hReqReset } from '../../../reducers/handleRequestReducer';
 
 export default function SignUpView() {
@@ -47,7 +47,7 @@ export default function SignUpView() {
 		e.preventDefault();
 
 		if (isValidform()) {
-			dispatch(signUpUser(name, email, password));
+			dispatch(authSignUpUser(name, email, password));
 		}
 	};
 

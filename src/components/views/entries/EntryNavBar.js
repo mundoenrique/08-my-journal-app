@@ -1,8 +1,10 @@
+import moment from 'moment';
+
 export default function EntryNavBar() {
 	return (
 		<>
 			<div className="notes__appbar">
-				<span>28 de Agosto 2020</span>
+				<span>{moment().format('MMMM Do YYYY, h:mm:ss a')}</span>
 				<input
 					id="fileSelector"
 					type="file"
