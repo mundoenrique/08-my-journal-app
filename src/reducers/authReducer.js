@@ -1,7 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { googleSignInFirebase } from '../firebase/usersFirebase';
-import { endRequest, setError, startRequest } from './handleRequestReducer';
+import {
+	googleSignInFirebase,
+	signUpUserFirebase,
+} from '../firebase/usersFirebase';
+import {
+	hReqEndRequest,
+	hReqSetError,
+	hReqSetSuccess,
+	hReqStartRequest,
+} from './handleRequestReducer';
 
 export const AuhtIniState = {
 	logged: false,
@@ -16,6 +24,13 @@ export const AuhtIniState = {
 const googleSignInThunk = createAsyncThunk('auth/googleSignIn', async () => {
 	return await googleSignInFirebase();
 });
+
+const signUpUserThunk = createAsyncThunk(
+	'auth/signUpUser',
+	async ({ name, email, password }) => {
+		return await signUpUserFirebase(name, email, password);
+	}
+);
 
 export const authReducer = createSlice({
 	name: 'auth',
@@ -54,6 +69,18 @@ export const authReducer = createSlice({
 					...state,
 					...action.payload,
 				};
+			})
+			.addCase(signUpUserThunk.fulfilled, (state, action) => {
+				return {
+					...state,
+					...action.payload,
+				};
+			})
+			.addCase(signUpUserThunk.rejected, (state, action) => {
+				return {
+					...state,
+					...action.payload,
+				};
 			});
 	},
 });
@@ -61,15 +88,30 @@ export const authReducer = createSlice({
 export const { LoggedIn, LoggedOut } = authReducer.actions;
 
 export const googleSignIn = () => async (dispatch, getState) => {
-	dispatch(startRequest());
+	dispatch(hReqStartRequest());
 	await dispatch(googleSignInThunk());
 	const { errorCode, errorMsg } = getState().auth;
 
 	if (errorCode) {
-		dispatch(setError({ errorMsg }));
+		dispatch(hReqSetError({ errorMsg }));
 	}
 
-	dispatch(endRequest());
+	dispatch(hReqEndRequest());
 };
+
+export const signUpUser =
+	(name, email, password) => async (dispatch, getState) => {
+		dispatch(hReqStartRequest());
+		await dispatch(signUpUserThunk({ name, email, password }));
+		const { errorCode, errorMsg } = getState().auth;
+
+		if (errorCode) {
+			dispatch(hReqSetError({ errorMsg }));
+		} else {
+			dispatch(hReqSetSuccess());
+		}
+
+		dispatch(hReqEndRequest());
+	};
 
 export default authReducer.reducer;

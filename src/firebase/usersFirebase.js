@@ -1,4 +1,10 @@
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import {
+	createUserWithEmailAndPassword,
+	getAuth,
+	GoogleAuthProvider,
+	signInWithPopup,
+	updateProfile,
+} from 'firebase/auth';
 
 import { googleProvider } from './settingsFirebase';
 import { AuhtIniState } from '../reducers/authReducer';
@@ -8,6 +14,7 @@ export const googleSignInFirebase = () => {
 	return signInWithPopup(auth, googleProvider)
 		.then((result) => {
 			const { accessToken } = GoogleAuthProvider.credentialFromResult(result);
+
 			return {
 				...AuhtIniState,
 				uid: result.user.uid,
@@ -21,6 +28,27 @@ export const googleSignInFirebase = () => {
 				...AuhtIniState,
 				email: error.email,
 				token: GoogleAuthProvider.credentialFromError(error),
+				errorCode: error.code,
+				errorMsg: error.message,
+			};
+		});
+};
+
+export const signUpUserFirebase = (name, email, password) => {
+	return createUserWithEmailAndPassword(auth, email, password)
+		.then(async ({ user }) => {
+			await updateProfile(user, { displayName: name });
+
+			return {
+				...AuhtIniState,
+				uid: user.uid,
+				email: user.email,
+				name: user.displayName,
+			};
+		})
+		.catch((error) => {
+			return {
+				...AuhtIniState,
 				errorCode: error.code,
 				errorMsg: error.message,
 			};

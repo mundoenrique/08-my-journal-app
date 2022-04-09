@@ -2,29 +2,40 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const handleReqIniState = {
 	loading: false,
-	errorMsg: '',
+	success: false,
+	errorMsg: false,
 };
 
 export const handleRequestReducer = createSlice({
 	name: 'handleRequest',
 	initialState: handleReqIniState,
 	reducers: {
-		startRequest: (state) => {
+		hReqStartRequest: (state) => {
 			state.loading = true;
 		},
-		endRequest: (state) => {
+		hReqEndRequest: (state) => {
 			state.loading = false;
 		},
-		setError: (state, action) => {
+		hReqSetError: (state, action) => {
 			state.errorMsg = action.payload.errorMsg;
 		},
-		removeError: (state) => {
-			state.errorMsg = '';
+		hReqSetSuccess: (state) => {
+			state.success = true;
+		},
+		hReqReset: () => {
+			return {
+				...handleReqIniState,
+			};
 		},
 	},
 });
 
-export const { startRequest, endRequest, setError, removeError } =
-	handleRequestReducer.actions;
+export const {
+	hReqStartRequest,
+	hReqEndRequest,
+	hReqSetError,
+	hReqSetSuccess,
+	hReqReset,
+} = handleRequestReducer.actions;
 
 export default handleRequestReducer.reducer;
