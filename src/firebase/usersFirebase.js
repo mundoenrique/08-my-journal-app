@@ -35,21 +35,16 @@ export const signUpUserFirebase = (name, email, password) => {
 export const signInUserFirebase = (email, password) => {
 	return signInWithEmailAndPassword(auth, email, password)
 		.then((result) => {
-			const { accessToken } = GoogleAuthProvider.credentialFromResult(result);
-
 			return {
 				...AuhtIniState,
 				uid: result.user.uid,
 				email: result.user.email,
 				name: result.user.displayName,
-				token: accessToken,
 			};
 		})
 		.catch((error) => {
 			return {
 				...AuhtIniState,
-				email: error.email,
-				token: GoogleAuthProvider.credentialFromError(error),
 				errorCode: error.code,
 				errorMsg: error.message,
 			};

@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import {
 	signInGoogleFirebase,
+	signInUserFirebase,
 	signUpUserFirebase,
 } from '../firebase/usersFirebase';
 import {
@@ -28,6 +29,13 @@ const signUpUserThunk = createAsyncThunk(
 	}
 );
 
+const signInUserThunk = createAsyncThunk(
+	'auth/authSignInUser',
+	async ({ email, password }) => {
+		return await signInUserFirebase(email, password);
+	}
+);
+
 const signInGoogleThunk = createAsyncThunk(
 	'auth/authSignInGoogle',
 	async () => {
@@ -39,15 +47,6 @@ export const authReducer = createSlice({
 	name: 'auth',
 	initialState: AuhtIniState,
 	reducers: {
-		LoggedIn: (state, action) => {
-			return {
-				...state,
-				logged: true,
-				uid: action.payload.uid,
-				name: action.payload.name,
-				email: action.payload.email,
-			};
-		},
 		LoggedOut: (state) => {
 			return {
 				...state,
@@ -67,6 +66,19 @@ export const authReducer = createSlice({
 				};
 			})
 			.addCase(signUpUserThunk.rejected, (state, action) => {
+				return {
+					...state,
+					...action.payload,
+				};
+			})
+			.addCase(signInUserThunk.fulfilled, (state, action) => {
+				return {
+					...state,
+					...action.payload,
+					logged: action.payload.errorCode === false,
+				};
+			})
+			.addCase(signInUserThunk.rejected, (state, action) => {
 				return {
 					...state,
 					...action.payload,
@@ -100,6 +112,19 @@ export const authSignUpUser =
 			dispatch(hReqSetError({ errorMsg }));
 		} else {
 			dispatch(hReqSetSuccess());
+		}
+
+		dispatch(hReqEndRequest());
+	};
+
+export const authSignInUser =
+	(email, password) => async (dispatch, getState) => {
+		dispatch(hReqStartRequest());
+		await dispatch(signInUserThunk({ email, password }));
+		const { errorCode, errorMsg } = getState().auth;
+
+		if (errorCode) {
+			dispatch(hReqSetError({ errorMsg }));
 		}
 
 		dispatch(hReqEndRequest());

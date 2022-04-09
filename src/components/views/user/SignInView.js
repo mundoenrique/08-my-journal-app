@@ -1,21 +1,58 @@
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import validator from 'validator';
 
 import { useFormHook } from '../../../hooks/useFormHook';
-import { authSignInGoogle, LoggedIn } from '../../../reducers/authReducer';
+import {
+	authSignInGoogle,
+	authSignInUser,
+} from '../../../reducers/authReducer';
+import { hReqReset } from '../../../reducers/handleRequestReducer';
 
 export default function SignInView() {
 	const dispatch = useDispatch();
-	const { loading } = useSelector((state) => state.handleRequest);
+	const { loading, errorMsg } = useSelector((state) => state.handleRequest);
+	const [ValueError, setValueError] = useState(false);
+
 	const [{ email, password }, handleFormValues] = useFormHook({
 		email: '',
 		password: '',
 	});
 
+	if (errorMsg) {
+		Swal.fire({
+			icon: 'error',
+			title: 'Wait!',
+			text: errorMsg,
+		}).then(() => {
+			dispatch(hReqReset());
+		});
+	}
+
 	const handlesignIn = (e) => {
 		e.preventDefault();
 
-		dispatch(LoggedIn({ uid: password, name: email, email: email }));
+		if (isValidform()) {
+			dispatch(authSignInUser(email, password));
+		}
+	};
+
+	const isValidform = () => {
+		let valid = true;
+
+		if (!validator.isEmail(email)) {
+			setValueError('Invalid email');
+			valid = false;
+		} else if (password.trim().length === 0) {
+			setValueError('Password is required');
+
+			valid = false;
+		}
+		valid && setValueError(false);
+
+		return valid;
 	};
 
 	const handleGoogleSignIn = () => {
@@ -29,6 +66,7 @@ export default function SignInView() {
 				className="animate__animated animate__fadeIn animate__faster"
 				onSubmit={handlesignIn}
 			>
+				{ValueError && <div className="auth__alert-error">{ValueError}</div>}
 				<input
 					type="text"
 					placeholder="Email"
