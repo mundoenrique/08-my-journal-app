@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const handleReqIniState = {
+export const handleReqIniState = {
 	loading: false,
 	success: false,
-	errorMsg: false,
+	errorCode: false,
+	errorMsg: null,
 };
 
 export const handleRequestReducer = createSlice({
@@ -19,13 +20,13 @@ export const handleRequestReducer = createSlice({
 		hReqSetError: (state, action) => {
 			state.errorMsg = action.payload.errorMsg;
 		},
-		hReqSetSuccess: (state) => {
-			state.success = true;
+		hReqSetSuccess: (state, action) => {
+			state.success = action.payload;
 		},
-		hReqReset: () => {
-			return {
-				...handleReqIniState,
-			};
+		hReqReset: (state) => {
+			state.success = false;
+			state.errorCode = false;
+			state.errorMsg = null;
 		},
 	},
 });

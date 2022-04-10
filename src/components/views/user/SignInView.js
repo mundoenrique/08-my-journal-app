@@ -6,9 +6,9 @@ import validator from 'validator';
 
 import { useFormHook } from '../../../hooks/useFormHook';
 import {
-	authSignInGoogle,
-	authSignInUser,
-} from '../../../reducers/authReducer';
+	signInUserAuthAct,
+	singnInGoogleAuthAct,
+} from '../../../reducers/authActions';
 import { hReqReset } from '../../../reducers/handleRequestReducer';
 
 export default function SignInView() {
@@ -35,7 +35,7 @@ export default function SignInView() {
 		e.preventDefault();
 
 		if (isValidform()) {
-			dispatch(authSignInUser(email, password));
+			dispatch(signInUserAuthAct(email, password));
 		}
 	};
 
@@ -56,7 +56,7 @@ export default function SignInView() {
 	};
 
 	const handleGoogleSignIn = () => {
-		dispatch(authSignInGoogle());
+		dispatch(singnInGoogleAuthAct());
 	};
 
 	return (

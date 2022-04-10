@@ -7,7 +7,6 @@ export default function AuthRouter() {
 	let auth = false;
 	let path = pathname;
 	// const matchPath = pathname.match(/^\/(|signup|journal)$/);
-
 	switch (pathname) {
 		case '/':
 		case '/signup':

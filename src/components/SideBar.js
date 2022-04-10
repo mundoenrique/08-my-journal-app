@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { LoggedOut } from '../reducers/authReducer';
+import { signOutAuthAct } from '../reducers/authActions';
 import JournalEntries from './views/journal/JournalEntries';
 
 export default function SideBar() {
@@ -7,7 +7,7 @@ export default function SideBar() {
 	const { name } = useSelector((state) => state.auth);
 
 	const handleLogout = () => {
-		dispatch(LoggedOut());
+		dispatch(signOutAuthAct());
 	};
 
 	return (

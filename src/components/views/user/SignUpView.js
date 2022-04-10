@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import validator from 'validator';
 
 import { useFormHook } from '../../../hooks/useFormHook';
-import { authSignUpUser } from '../../../reducers/authReducer';
+import { signUpUserAuthAct } from '../../../reducers/authActions';
 import { hReqReset } from '../../../reducers/handleRequestReducer';
 
 export default function SignUpView() {
@@ -33,21 +33,15 @@ export default function SignUpView() {
 	}
 
 	if (success) {
-		Swal.fire({
-			icon: 'success',
-			title: 'Success!',
-			text: 'You have successfully signed up!',
-		}).then(() => {
-			dispatch(hReqReset());
-			resetValues();
-		});
+		dispatch(hReqReset());
+		resetValues();
 	}
 
 	const handleSignUp = (e) => {
 		e.preventDefault();
 
 		if (isValidform()) {
-			dispatch(authSignUpUser(name, email, password));
+			dispatch(signUpUserAuthAct(name, email, password));
 		}
 	};
 

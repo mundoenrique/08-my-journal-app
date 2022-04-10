@@ -1,145 +1,56 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { signOutAuthAct, userStateChangedAuthAct } from './authActions';
 
-import {
-	signInGoogleFirebase,
-	signInUserFirebase,
-	signUpUserFirebase,
-} from '../firebase/usersFirebase';
-import {
-	hReqEndRequest,
-	hReqSetError,
-	hReqSetSuccess,
-	hReqStartRequest,
-} from './handleRequestReducer';
-
-export const AuhtIniState = {
+export const auhtIniState = {
 	logged: false,
-	uid: '',
-	name: '',
-	email: '',
-	token: '',
-	errorCode: false,
-	errorMsg: '',
+	uid: null,
+	name: null,
+	email: null,
+	token: null,
 };
-
-const signUpUserThunk = createAsyncThunk(
-	'auth/authSignUpUser',
-	async ({ name, email, password }) => {
-		return await signUpUserFirebase(name, email, password);
-	}
-);
-
-const signInUserThunk = createAsyncThunk(
-	'auth/authSignInUser',
-	async ({ email, password }) => {
-		return await signInUserFirebase(email, password);
-	}
-);
-
-const signInGoogleThunk = createAsyncThunk(
-	'auth/authSignInGoogle',
-	async () => {
-		return await signInGoogleFirebase();
-	}
-);
 
 export const authReducer = createSlice({
 	name: 'auth',
-	initialState: AuhtIniState,
+	initialState: auhtIniState,
 	reducers: {
-		LoggedOut: (state) => {
+		authLoggedIn: (state, action) => {
+			state.logged = true;
+			state.uid = action.payload.uid;
+			state.name = action.payload.name;
+			state.email = action.payload.email;
+			state.token = action.payload.token;
+		},
+		LoggedOut: () => {
 			return {
-				...state,
-				logged: false,
-				uid: '',
-				name: '',
-				email: '',
+				...auhtIniState,
 			};
 		},
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(signUpUserThunk.fulfilled, (state, action) => {
+			.addCase(userStateChangedAuthAct.fulfilled, (state, action) => {
 				return {
 					...state,
 					...action.payload,
 				};
 			})
-			.addCase(signUpUserThunk.rejected, (state, action) => {
+			.addCase(userStateChangedAuthAct.rejected, () => {
 				return {
-					...state,
-					...action.payload,
+					...auhtIniState,
 				};
 			})
-			.addCase(signInUserThunk.fulfilled, (state, action) => {
+			.addCase(signOutAuthAct.fulfilled, () => {
 				return {
-					...state,
-					...action.payload,
-					logged: action.payload.errorCode === false,
+					...auhtIniState,
 				};
 			})
-			.addCase(signInUserThunk.rejected, (state, action) => {
+			.addCase(signOutAuthAct.rejected, () => {
 				return {
-					...state,
-					...action.payload,
-				};
-			})
-			.addCase(signInGoogleThunk.fulfilled, (state, action) => {
-				return {
-					...state,
-					...action.payload,
-					logged: action.payload.errorCode === false,
-				};
-			})
-			.addCase(signInGoogleThunk.rejected, (state, action) => {
-				return {
-					...state,
-					...action.payload,
+					...auhtIniState,
 				};
 			});
 	},
 });
 
-export const { LoggedIn, LoggedOut } = authReducer.actions;
-
-export const authSignUpUser =
-	(name, email, password) => async (dispatch, getState) => {
-		dispatch(hReqStartRequest());
-		await dispatch(signUpUserThunk({ name, email, password }));
-		const { errorCode, errorMsg } = getState().auth;
-
-		if (errorCode) {
-			dispatch(hReqSetError({ errorMsg }));
-		} else {
-			dispatch(hReqSetSuccess());
-		}
-
-		dispatch(hReqEndRequest());
-	};
-
-export const authSignInUser =
-	(email, password) => async (dispatch, getState) => {
-		dispatch(hReqStartRequest());
-		await dispatch(signInUserThunk({ email, password }));
-		const { errorCode, errorMsg } = getState().auth;
-
-		if (errorCode) {
-			dispatch(hReqSetError({ errorMsg }));
-		}
-
-		dispatch(hReqEndRequest());
-	};
-
-export const authSignInGoogle = () => async (dispatch, getState) => {
-	dispatch(hReqStartRequest());
-	await dispatch(signInGoogleThunk());
-	const { errorCode, errorMsg } = getState().auth;
-
-	if (errorCode) {
-		dispatch(hReqSetError({ errorMsg }));
-	}
-
-	dispatch(hReqEndRequest());
-};
-
+export const { authLoggedIn, LoggedOut } = authReducer.actions;
 export default authReducer.reducer;

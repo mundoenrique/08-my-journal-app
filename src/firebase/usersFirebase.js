@@ -1,52 +1,78 @@
 import {
 	createUserWithEmailAndPassword,
-	getAuth,
 	GoogleAuthProvider,
+	onAuthStateChanged,
 	signInWithEmailAndPassword,
 	signInWithPopup,
+	signOut,
 	updateProfile,
 } from 'firebase/auth';
 
-import { googleProvider } from './settingsFirebase';
-import { AuhtIniState } from '../reducers/authReducer';
+import { auth, googleProvider } from './settingsFirebase';
+import { auhtIniState } from '../reducers/authReducer';
+import { handleReqIniState } from '../reducers/handleRequestReducer';
 
-const auth = getAuth();
 export const signUpUserFirebase = (name, email, password) => {
 	return createUserWithEmailAndPassword(auth, email, password)
-		.then(async ({ user }) => {
-			await updateProfile(user, { displayName: name });
-
+		.then(({ user }) => {
+			updateProfile(user, { displayName: name });
 			return {
-				...AuhtIniState,
-				uid: user.uid,
-				email: user.email,
-				name: user.displayName,
+				auth: {
+					...auhtIniState,
+					uid: user.uid,
+					email: user.email,
+					name: user.displayName,
+					token: user.accessToken,
+				},
+				handleReq: {
+					...handleReqIniState,
+					success: true,
+				},
 			};
 		})
 		.catch((error) => {
 			return {
-				...AuhtIniState,
-				errorCode: error.code,
-				errorMsg: error.message,
+				auth: {
+					...auhtIniState,
+				},
+				handleReq: {
+					...handleReqIniState,
+					success: false,
+					errorCode: error.code,
+					errorMsg: error.message,
+				},
 			};
 		});
 };
 
 export const signInUserFirebase = (email, password) => {
 	return signInWithEmailAndPassword(auth, email, password)
-		.then((result) => {
+		.then(({ user }) => {
 			return {
-				...AuhtIniState,
-				uid: result.user.uid,
-				email: result.user.email,
-				name: result.user.displayName,
+				auth: {
+					...auhtIniState,
+					uid: user.uid,
+					email: user.email,
+					name: user.displayName,
+					token: user.accessToken,
+				},
+				handleReq: {
+					...handleReqIniState,
+					success: true,
+				},
 			};
 		})
 		.catch((error) => {
 			return {
-				...AuhtIniState,
-				errorCode: error.code,
-				errorMsg: error.message,
+				auth: {
+					...auhtIniState,
+				},
+				handleReq: {
+					...handleReqIniState,
+					success: false,
+					errorCode: error.code,
+					errorMsg: error.message,
+				},
 			};
 		});
 };
@@ -54,23 +80,64 @@ export const signInUserFirebase = (email, password) => {
 export const signInGoogleFirebase = () => {
 	return signInWithPopup(auth, googleProvider)
 		.then((result) => {
+			console.log(result.user);
 			const { accessToken } = GoogleAuthProvider.credentialFromResult(result);
 
 			return {
-				...AuhtIniState,
-				uid: result.user.uid,
-				email: result.user.email,
-				name: result.user.displayName,
-				token: accessToken,
+				auth: {
+					...auhtIniState,
+					uid: result.user.uid,
+					email: result.user.email,
+					name: result.user.displayName,
+					token: accessToken,
+				},
+				handleReq: {
+					...handleReqIniState,
+					success: true,
+				},
 			};
 		})
 		.catch((error) => {
 			return {
-				...AuhtIniState,
-				email: error.email,
-				token: GoogleAuthProvider.credentialFromError(error),
-				errorCode: error.code,
-				errorMsg: error.message,
+				auth: {
+					...auhtIniState,
+					email: error.email,
+					token: GoogleAuthProvider.credentialFromError(error),
+				},
+				handleReq: {
+					...handleReqIniState,
+					success: false,
+					errorCode: error.code,
+					errorMsg: error.message,
+				},
 			};
 		});
+};
+
+export const userStateChangedFirebase = () => {
+	return new Promise((resolve) => {
+		onAuthStateChanged(auth, (user) => {
+			if (user) {
+				resolve({
+					...auhtIniState,
+					logged: true,
+					uid: user.uid,
+					email: user.email,
+					name: user.displayName,
+					token: user.accessToken,
+				});
+			} else {
+				resolve({
+					...auhtIniState,
+				});
+			}
+			console.log(user);
+		});
+	});
+};
+
+export const signOutUserFirebase = () => {
+	return signOut(auth)
+		.then(() => {})
+		.catch((error) => {});
 };
